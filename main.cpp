@@ -1,4 +1,6 @@
 #include <iostream>
+#include<ctime>
+#include <cstdlib>
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
@@ -11,64 +13,82 @@ struct Grade{
 	int Day; // день
 };
 
+/**
+* объ€влени€ фкнций
+*/
+void output(Grade* grade);
+void input(Grade* grade);
+
+
 int main(int argc, char** argv) {
-	Grade gradeMath,gradeGraphics;
-	Grade* ptrMath;
 	Grade* ptrGrades;
-	
-	gradeMath.Value = 5;
-	gradeMath.Subject = "Math";
-	gradeMath.Day = 12;
-	gradeMath.Month = 1;
-	gradeMath.Year = 2018;
-	gradeMath.Name = "Kupriyanov";
-	
-	gradeGraphics.Value = 4;
-	gradeGraphics.Subject = "Graphics";
-	gradeGraphics.Day = 20;
-	gradeGraphics.Month = 1;
-	gradeGraphics.Year = 2018;
-	gradeGraphics.Name = "Belyaev";
-	
-	
+	ptrGrades = new Grade[2];
 
-	// вывод двух струткутр на экран
-	//printf("|Subject        |Grade   |Date      |Name                |\n"); // header
-	printf("|%15s|%8s|%10s|%20s|\n","Subject", "Grade", "Date", "Name"); // вывод заголовка с помощью шаблона
-
-	printf("|%15s|%8d|%02d.%02d.%4d|%20s|\n",
-		gradeMath.Subject, 
-		gradeMath.Value, 
-		gradeMath.Day, 
-		gradeMath.Month, 
-		gradeMath.Year, 
-		gradeMath.Name
-	);
-	printf("|%15s|%8d|%02d.%02d.%4d|%20s|\n",
-		gradeGraphics.Subject, 
-		gradeGraphics.Value, 
-		gradeGraphics.Day, 
-		gradeGraphics.Month, 
-		gradeGraphics.Year, 
-		gradeGraphics.Name
-	);
+	// ввод струкутр
+	// TODO: сделать в цикле самосто€тельно
+	input(ptrGrades);
+	input(ptrGrades+1);
 	
-	ptrMath = &gradeMath; // берем адрес переменной gradeMath
-	ptrMath->Value = 4; // мен€ем значение по указателю
-	// снова выводим переменную
-	printf("|%15s|%8d|%02d.%02d.%4d|%20s|\n",
-		gradeMath.Subject, 
-		gradeMath.Value, 
-		gradeMath.Day, 
-		gradeMath.Month, 
-		gradeMath.Year, 
-		gradeMath.Name
-	);
+	// вывод массива структур
+	output(NULL); // шапка
+	for(int i=0; i<2; i++){
+		output(&ptrGrades[i]);
+	}
 	
-	ptrGrades = new Grade[5];
-	
-	
+	for(int i=0; i<2; i++){
+		// освободим пам€ть из под полей Subject и Name
+		// TODO: объ€снить, зачем нужно освободить пам€ть
+		delete ptrGrades[i].Subject;
+		delete ptrGrades[i].Name;
+	}
 	delete ptrGrades;
 	
 	return 0;
 }
+
+/**
+* определение функции input
+*/
+void input(Grade* grade)
+{
+	// TODO:  ввод следует сделать самосто€тельно
+	// вместо ввода дл€ примера сгенерирую данные
+	time_t temp = time(NULL);
+	srand(temp+rand());
+
+	grade->Day = 1 + rand() % 31;
+	grade->Month = 1 + rand() % 12;
+	grade->Year = 2015 + rand() % 4;
+	grade->Value = 3 + rand() % 3;
+	char* subject = new char[15];
+	sprintf(subject, "Test %d",1 + rand() % 50);
+	grade->Subject = subject;
+	char* name = new char[20];
+	sprintf(name, "Prepod %d", 1 + rand() % 50);
+	grade->Name = name;
+
+}
+
+/**
+* определение функции output 
+*/
+void output(Grade* grade)
+{
+	if(grade == NULL){
+		// выводим шапку
+		printf("|%15s|%8s|%10s|%20s|\n","Subject", "Grade", "Date", "Name"); // вывод заголовка с помощью шаблона
+	}
+	else{
+		// обращаем внимание на доступ к пол€м черз указатель
+		printf("|%15s|%8d|%02d.%02d.%4d|%20s|\n",
+			grade->Subject,  
+			grade->Value, 
+			grade->Day, 
+			grade->Month, 
+			grade->Year, 
+			grade->Name
+		);
+	}
+}
+
+
